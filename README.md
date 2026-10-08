@@ -84,7 +84,7 @@ npx skills@latest add yuezi2048/skills
 
 ### 2. 统一语言让 Agent 更少猜
 
-`grill-with-docs` 和 `domain-modeling` 会维护领域术语、`CONTEXT.md` 与 ADR。人和 Agent 使用同一套词，模块、函数和测试的命名就有了共同依据。
+`grill-with-docs` 和 `domain-modeling` 会维护领域术语、`GLOSSARY.md` 与 ADR。人和 Agent 使用同一套词，模块、函数和测试的命名就有了共同依据。
 
 例如，先约定 `ghost`、`real`、`materialize`、`materialization cascade` 的含义，再讨论课程功能。这样比每次重新解释“数据库里有但磁盘里没有的课程”更精确，也更省上下文。
 
@@ -117,6 +117,7 @@ npx skills@latest add yuezi2048/skills
 | 已完成一段实现，需要独立评审 | [`code-review`](./skills/engineering/code-review/SKILL.md) |
 | 正在定位复杂 bug 或性能回归 | [`diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md) |
 | 不确定术语或需要更新领域模型 | [`domain-modeling`](./skills/engineering/domain-modeling/SKILL.md) |
+| 看不懂现状，或需要把现有流程讲清楚 | [`show-me`](./skills/in-progress/show-me/SKILL.md) |
 | 需要把当前会话交给另一个 Agent | [`handoff`](./skills/productivity/handoff/SKILL.md) |
 
 ## 技能地图
@@ -128,14 +129,16 @@ npx skills@latest add yuezi2048/skills
 **User-invoked**
 
 - [`ask-matt`](./skills/engineering/ask-matt/SKILL.md)：根据当前情况选择入口。
-- [`grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md)：追问需求，同时更新术语、`CONTEXT.md` 和 ADR。
+- [`grill-with-docs`](./skills/engineering/grill-with-docs/SKILL.md)：追问需求，同时更新术语、`GLOSSARY.md` 和 ADR。
 - [`triage`](./skills/engineering/triage/SKILL.md)：按状态机评估和分流 issue、PR。
 - [`improve-codebase-architecture`](./skills/engineering/improve-codebase-architecture/SKILL.md)：周期性扫描架构深化机会。
 - [`setup-matt-pocock-skills`](./skills/engineering/setup-matt-pocock-skills/SKILL.md)：每个仓库首次使用前完成配置。
 - [`to-spec`](./skills/engineering/to-spec/SKILL.md)：把当前已讨论的共识写成 spec。
 - [`to-tickets`](./skills/engineering/to-tickets/SKILL.md)：把 spec 拆为带依赖的垂直切片。
 - [`implement`](./skills/engineering/implement/SKILL.md)：按 spec 或 tickets 实现，并接入 TDD 和评审。
+- [`implement-spec`](./skills/engineering/implement-spec/SKILL.md)：在一个集成分支上实现整个 spec，把 tickets 当任务图并行推进，收尾接评审。
 - [`wayfinder`](./skills/engineering/wayfinder/SKILL.md)：为超大任务建立共享决策地图。
+- [`retro`](./skills/engineering/retro/SKILL.md)：会话结束后，按严重程度提出对 Agent 环境的改进建议。
 
 **Model-invoked**
 
@@ -143,10 +146,10 @@ npx skills@latest add yuezi2048/skills
 - [`diagnosing-bugs`](./skills/engineering/diagnosing-bugs/SKILL.md)：按“复现、缩小、假设、观测、修复、回归测试”诊断复杂故障。
 - [`research`](./skills/engineering/research/SKILL.md)：基于高可信来源完成技术调研并留下引用。
 - [`tdd`](./skills/engineering/tdd/SKILL.md)：执行 red-green-refactor。
-- [`domain-modeling`](./skills/engineering/domain-modeling/SKILL.md)：维护领域语言、`CONTEXT.md` 和 ADR。
+- [`domain-modeling`](./skills/engineering/domain-modeling/SKILL.md)：维护领域语言、`GLOSSARY.md` 和 ADR。
 - [`codebase-design`](./skills/engineering/codebase-design/SKILL.md)：设计 deep module 和可测试的 seam。
 - [`code-review`](./skills/engineering/code-review/SKILL.md)：从 Standards、Spec 两条轴独立评审。
-- [`resolving-merge-conflicts`](./skills/engineering/resolving-merge-conflicts/SKILL.md)：按意图逐块解决 merge 或 rebase 冲突。
+- [`pr`](./skills/engineering/pr/SKILL.md)：规定 PR 正文的形状，用最小可视化说明改动、附前后对照证据，并给出合并风险判断。
 - [`wizard`](./skills/engineering/wizard/SKILL.md)：生成只需要人操作的交互式 bash 向导。
 
 ### Productivity
@@ -164,6 +167,19 @@ npx skills@latest add yuezi2048/skills
 - [`grilling`](./skills/productivity/grilling/SKILL.md)：所有追问型技能共用的底层访谈能力。
 - [`writing-for-agents`](./skills/productivity/writing-for-agents/SKILL.md)：编写给 Agent 消费的 skills、AGENTS.md 和相关文档。
 
+### In progress
+
+beta 中的技能：公开征求意见，不进 plugin，也可能随时改动或消失。
+
+- [`loop-me`](./skills/in-progress/loop-me/SKILL.md)：在多个会话中把想构建的工作流追问成可实现的 spec。
+- [`writing-beats`](./skills/in-progress/writing-beats/SKILL.md)：把文章组织成一段段 beat 的旅程，一次只写一段。
+- [`writing-fragments`](./skills/in-progress/writing-fragments/SKILL.md)：通过追问挖掘写作碎片，追加到同一份素材文档。
+- [`writing-shape`](./skills/in-progress/writing-shape/SKILL.md)：把素材 markdown 逐段塑造成文章，并论证每一步的格式选择。
+- [`claude-handoff`](./skills/in-progress/claude-handoff/SKILL.md)：把当前会话交给新的后台 Agent，用 handoff 摘要立即接手。
+- [`setup-ts-deep-modules`](./skills/in-progress/setup-ts-deep-modules/SKILL.md)：用 dependency-cruiser 把 TypeScript 仓库约束成 deep module。
+- [`chief-of-staff`](./skills/in-progress/chief-of-staff/SKILL.md)：在单个会话中调度子 Agent 与计划，推进一个长期目标。
+- [`show-me`](./skills/in-progress/show-me/SKILL.md)：用最小的视图把当前话题讲清楚；当话题是整个项目时，产出一组互相链接、可离线打开的 HTML 图纸。
+
 ## 设计边界
 
 - 小而明确的改动不必强行走完整链路，反馈环应当比流程更重要。
@@ -176,7 +192,7 @@ npx skills@latest add yuezi2048/skills
 
 ## 来源与定位
 
-本仓库遵循 [Matt Pocock 的 skills](https://github.com/mattpocock/skills) 的核心思想，并结合中文笔记中的学习和实践理解进行说明。这里没有新增 skill，目录中的实现仍以各自的 [`SKILL.md`](./skills/engineering/README.md) 为准；本 README 的职责是帮助读者快速理解整套方法如何工作。
+本仓库遵循 [Matt Pocock 的 skills](https://github.com/mattpocock/skills) 的核心思想，并结合中文笔记中的学习和实践理解进行说明。除上游技能外，本仓库额外加入了 [`show-me`](./skills/in-progress/show-me/SKILL.md)（in-progress）；其余目录中的实现仍以各自的 [`SKILL.md`](./skills/engineering/README.md) 为准，本 README 的职责是帮助读者快速理解整套方法如何工作。
 
 这套方法最适合这样描述：**人负责把“要解决什么问题、为什么这样解决、做到什么算完成”说清楚，Agent 负责在快速反馈中实现、验证和修正。**
 
