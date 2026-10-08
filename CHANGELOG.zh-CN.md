@@ -145,6 +145,14 @@ flowchart LR
 - 全部 docs 页做了一次「去 AI 味」重写，删掉套话。
 - 新增 in-progress 技能 `chief-of-staff`：在单个会话里调度子 Agent 和计划，推进一个长期目标。属于试验性质，上游尚未列入 in-progress 的 README 清单，本仓库补上了。
 
+### 本仓库自己的处理
+
+上游的 `.github/workflows/release.yml` 是给 mattpocock/skills 自己发版用的：changesets 机器人会在仓库里开一个 "chore: version skills" 的 PR，合并后再打 tag、发 GitHub Release。
+
+这个流程在本仓库没有意义，而且会直接失败：fork 默认不允许 GitHub Actions 创建 PR，所以机器人把 `changeset-release/main` 分支推上来之后，就卡在开 PR 这一步，Actions 页留一个红叉。它生成的 changelog 还硬编码指向 `mattpocock/skills`。
+
+处理方式：给这个 job 加了 `if: github.repository == 'mattpocock/skills'`，只在上游仓库运行，fork 里显示为 skipped。本仓库跟随上游合并，`CHANGELOG.md` 由上游维护，不需要自己发版。
+
 ## 六、版本时间线
 
 | 版本 | 日期 | 内容 |

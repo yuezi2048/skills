@@ -10,6 +10,12 @@ concurrency: ${{ github.workflow }}-${{ github.ref }}
 jobs:
   release:
     name: Version
+    # Upstream job. The changesets bot opens a version PR against the repo it
+    # runs in, then tags the release once that PR merges. In a fork the PR step
+    # fails, because Actions is not allowed to create pull requests by default,
+    # and the changelog it writes is hard-coded to mattpocock/skills anyway.
+    # Skip it anywhere but the upstream repo.
+    if: github.repository == 'mattpocock/skills'
     runs-on: ubuntu-latest
     permissions:
       contents: write
