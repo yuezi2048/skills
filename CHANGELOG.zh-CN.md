@@ -4,7 +4,7 @@
 
 为什么要单独写一份：上游的 [CHANGELOG.md](./CHANGELOG.md) 由 changesets 自动生成，英文、信息密度高，适合查证但不适合快速建立认知。这里用中文按「你受影响的方式」重新组织一遍，让自己和用这个仓库的人都能一眼看出「跟以前比，多了什么、少了什么、我要动什么」。
 
-覆盖范围：`v1.2.3`（2026-08-06）到 `v1.3.0`（2026-09-29）到 `v1.3.1`（2026-10-04），以及 `v1.3.1` 之后已经合并进 `main` 但尚未发版的改动。
+覆盖范围：`v1.2.3`（2026-08-06）到 `v1.3.0`（2026-09-29）到 `v1.3.1`（2026-10-04）再到 `v1.3.2`（2026-10-29）。`v1.3.1` 之后合并进 `main` 的改动，现在已经在 `v1.3.2` 里发版，归入下面的「v1.3.2 里有什么」。
 
 ## 一分钟速览
 
@@ -17,8 +17,55 @@
 | 删除 `resolving-merge-conflicts` | 移除技能 | 不要再调用它，冲突交给 Agent 常规处理即可 |
 | 新增 `chief-of-staff` | 新技能（in-progress） | 想试用要单独安装，不进 plugin |
 | 本仓库自己加的 `show-me` | 新增技能（in-progress） | 跟随本仓库安装即可，见 [README](./README.md) |
+| 安装方式重写：能自动更新的插件优先 | 文档与分发 | 选一条路线，别把插件和 skills.sh 都装上 |
+| 派发子 Agent 的技能改为「全新上下文窗口」 | 行为约定 | 不用做什么，Agent 会照做；fork 对话的习惯要改 |
+| 新增 `software-factory` | 新技能（in-progress） | 想设计软件工厂时连同一次 grilling 一起用 |
+| `chief-of-staff` 改成 wiki 记忆 | 行为变化（in-progress） | 想试用就单独安装 |
 
-一句话总结：**主流程多了一个收尾步骤 `retro` 和一个并行实现入口 `implement-spec`，PR 正文有了统一规范 `pr`，领域文档从「上下文」改叫「术语表」，并且删掉了一个不再需要的技能。**
+一句话总结：**主流程多了一个收尾步骤 `retro` 和一个并行实现入口 `implement-spec`，PR 正文有了统一规范 `pr`，领域文档从「上下文」改叫「术语表」，并且删掉了一个不再需要的技能。`v1.3.2` 又把安装方式改成「能自动更新的插件优先」，并给所有派发子 Agent 的技能定下了「全新上下文窗口」这条约定。**
+
+## v1.3.2 里有什么
+
+`v1.3.2` 是一个 patch 版本，但它把 `v1.3.1` 之后积攒的修正一次性发了出来，另外还有四件新东西。下面先说新的，已在上一版说明里写过的修正只在时间线上标注「已发版」。
+
+### 1. 安装方式重写了：能自动更新的优先
+
+以前 README 只教 `npx skills@latest add`，也就是把文件复制进你的项目，之后靠你自己更新。现在的顺序反过来了：**先选一个能自动更新的插件，skills.sh 退到「手动更新」那一档**。
+
+| Agent | 路线 | 自动更新吗 |
+| --- | --- | --- |
+| Claude Code | `claude-plugins-official` | 是，默认 |
+| Codex | 本仓库自己的 `mattpocock` marketplace | 是，启动时 |
+| Copilot CLI | 同上，加一次 `autoUpdate: true` | 是，一次性配置之后 |
+| VS Code | Chat: Install Plugin From Source | 是，每天 |
+| Gemini CLI | `gemini skills install`（复制文件） | 不会 |
+| 其他 agent | skills.sh | 不会 |
+
+两条路线是互斥的：插件是只读订阅，skills.sh 写的是你自己的可编辑文件，都装会让每个技能出现两次。
+
+机制上有个容易忽略的点：插件只在你改 `.claude-plugin/plugin.json` 的 `version` 时才重装，而那个字段由发版流程从 `package.json` 复制。所以「chore: version skills」那个 PR 合进来，才是用户真正拿到更新的时刻。
+
+### 2. 子 Agent 用全新的上下文窗口启动
+
+这是这一版里最值得记住的一条。Codex 派发子 Agent 时默认 **fork 当前对话**，而 fork 会把父对话的上下文一并继承，那正是子 Agent 存在的意义所在（干净的上下文）。现在所有会派发子 Agent 的技能都明说了要用全新窗口启动：`implement-spec`、`code-review`、`codebase-design`、`improve-codebase-architecture`、`wayfinder`、`research`、`grilling`、`chief-of-staff`。
+
+配套的两个变化：`implement-spec` 给每个 ticket 一个全新的实现者；`code-review` 的两个子 Agent 改在前台运行并使用它们返回的报告。
+
+### 3. 新增 `software-factory`（in-progress）
+
+一套设计「软件工厂」的共同语言，不是流程。它把工厂拆成两半：**服务槽位**（ticket tracker、git host、orchestrator、runner、observability）和**任务**（review、explore、implement、ratchet），并给出各自的规范用词与要避免的说法。
+
+它强调先慢后快：每个触发器都是加速器，加速器没有刹车就是一台「slop cannon」。三道刹车是自动化检查、自动化评审、人工评审。它适合和一次 grilling 一起用，先把要解决的真实问题问出来，再摆工厂。
+
+### 4. `chief-of-staff` 改成 wiki 记忆
+
+in-progress 的 `chief-of-staff` 不再把部落知识放在上下文里，而是落成一个 **wiki**：`index.md` 加一页一个主题，通过 ingest、query、lint 三个操作维护。写法是记录历史而不是描述当下：每条结论都带日期，涉及代码的结论还要注明它成立时的 commit。有共享 wiki 时优先写进共享的那个。
+
+### 5. 仓库本身：问题按类别分流
+
+- 新增 `CONTRIBUTING.md`：bug 开 issue，问问题去 Q&A，想提新技能去 Ideas，不在 issue 里讨论。PR 只对协作者开放。
+- issue 模板按类别重写，并关闭空白 issue。
+- 明确要求：Agent 只能往**用户自己的仓库**开 issue，不许开到 `mattpocock/skills`。以前有 Agent 把自己的 spec 和 ticket 提了上去。
 
 ## 一、最需要留意的改动：领域文档改名
 
@@ -160,10 +207,13 @@ flowchart LR
 | `v1.2.3` | 2026-08-06 | 本仓库的起点基线 |
 | `v1.3.0` | 2026-09-29 | 毕业 `implement-spec`、`pr`、`retro`；删除 `resolving-merge-conflicts`；`CONTEXT.md` 改名 `GLOSSARY.md`；跨技能调用改为 Skill 工具；全仓库清理 em-dash |
 | `v1.3.1` | 2026-10-04 | 修正 `ask-matt` 的过时跳转，改为指向 `/retro` |
-| `main`（未发布） | 2026-10 之后 | 上表「其他修正」中的大部分，以及 `chief-of-staff` |
+| `v1.3.2` | 2026-10-29 | 安装方式改为插件优先；子 Agent 改用全新上下文；新增 `software-factory`；`chief-of-staff` 改成 wiki 记忆；上一版的修正全部发版 |
+| `main`（未发布） | 2026-10 之后 | 跟随上游继续合并 |
 
 ## 七、升级检查清单
 
+- [ ] 如果你在用插件，确认装的是 `v1.3.2`（`plugin.json` 的 `version`）；如果是 skills.sh 装的，重跑 `npx skills@latest add` 才能拿到新技能。
+- [ ] 检查团队或自己的约定里有没有「子 Agent fork 当前对话」的旧习惯，统一改成全新上下文窗口。
 - [ ] 老仓库的 `CONTEXT.md` / `CONTEXT-MAP.md` 改名成 `GLOSSARY.md` / `GLOSSARY-MAP.md`。
 - [ ] 重跑 `/setup-matt-pocock-skills`，刷新 `docs/agents/` 下的 tracker 与标签配置。
 - [ ] 确认不再有脚本或文档调用 `/resolving-merge-conflicts`。
